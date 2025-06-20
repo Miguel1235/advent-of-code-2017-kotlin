@@ -1,7 +1,5 @@
-private fun part(input: List<Char>, isPart1: Boolean = true): Int {
-    val chunks = buildChunks(input, isPart1)
-
-    return chunks.filter { it.first == it.second }
+private val part = {input: List<Char>, isPart1: Boolean ->
+    buildChunks(input, isPart1).filter { it.first == it.second }
         .sumOf { it.first.digitToInt() }
 }
 
@@ -20,11 +18,11 @@ private fun buildChunks(input: List<Char>, isPart1: Boolean = true): List<Pair<C
 
 fun main() {
     val testInput = readInput("Day01_test").first().toList()
-    check(part(testInput) == 0)
+    check(part(testInput, true) == 0)
     check(part(testInput, false) == 4)
 
     val input = readInput("Day01").first().toList()
-    check(part(input) == 1102)
+    check(part(input, true) == 1102)
     check(part(input, false) == 1076)
 
 }
