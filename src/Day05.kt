@@ -1,4 +1,4 @@
-private fun part(input: List<Int>, isPart2: Boolean = false): Int {
+private val part = { input: List<Int>, isPart2: Boolean ->
     var cursor = 0
     val instructions = input.toMutableList()
     var steps = 0
@@ -11,20 +11,16 @@ private fun part(input: List<Int>, isPart2: Boolean = false): Int {
         cursor += jump
         steps++
     }
-    return steps
-}
-
-private fun part2(input: List<String>): Int {
-    return 0
+    steps
 }
 
 fun main() {
     val testInput = readInput("Day05_test").map { it.toInt() }
-    check(part(testInput) == 5)
+    check(part(testInput, false) == 5)
     check(part(testInput, true) == 10)
 
     val input = readInput("Day05").map { it.toInt() }
-    check(part(input) == 372139)
+    check(part(input, false) == 372139)
     check(part(input, true) == 29629538)
 }
  
