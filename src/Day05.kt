@@ -23,4 +23,3 @@ fun main() {
     check(part(input, false) == 372139)
     check(part(input, true) == 29629538)
 }
- 
