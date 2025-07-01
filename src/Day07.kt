@@ -1,4 +1,4 @@
-private fun part1(input: List<String>): Int {
+private fun part1(input: List<String>): String {
     data class Tower(val name: String, val size: Int, val children: List<Tower>?) {
         fun weight(): Int {
             return children?.sumOf { 1 + it.weight() } ?: 0
@@ -30,13 +30,8 @@ private fun part1(input: List<String>): Int {
         }
     }
 
-
-//    allTowers.forEach { println("${it.name} ${it.weight()}") }
-
     val baseTower = allTowers.maxBy { it.weight() }
-    println(baseTower.name)
-    println("*****")
-    return 0
+    return baseTower.name
 }
 
 private fun part2(input: List<String>): Int {
@@ -45,11 +40,11 @@ private fun part2(input: List<String>): Int {
 
 fun main() {
     val testInput = readInput("Day07_test")
-    check(part1(testInput) == 0)
+    check(part1(testInput) == "")
 //    check(part2(testInput) == 0)
 
     val input = readInput("Day07")
-    check(part1(input) == 0)
+    check(part1(input) == "")
 //    check(part2(input) == 0)
 }
  
