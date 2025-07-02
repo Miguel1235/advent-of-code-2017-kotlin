@@ -1,9 +1,8 @@
-fun updateRegisterValue(operation: String, registers: MutableMap<String, Int>, register: String, amount: Int) {
-    if (operation == "inc") {
-        registers[register] = registers[register]!! + amount
-        return
+private val updateRegisterValue = { operation: String, registers: MutableMap<String, Int>, register: String, amount: Int ->
+    when(operation) {
+        "inc" -> registers[register] = registers[register]!! + amount
+        "dec" -> registers[register] = registers[register]!! - amount
     }
-    registers[register] = registers[register]!! - amount
 }
 
 private fun part1(instructions: List<Instruction>, isPart1: Boolean = true): Int {
@@ -19,35 +18,30 @@ private fun part1(instructions: List<Instruction>, isPart1: Boolean = true): Int
                 register,
                 amount
             )
-
             ComparatorOperator.NOT_EQUAL -> if (operand1Value != operand2) updateRegisterValue(
                 operation,
                 registers,
                 register,
                 amount
             )
-
             ComparatorOperator.LESS_THAN -> if (operand1Value < operand2) updateRegisterValue(
                 operation,
                 registers,
                 register,
                 amount
             )
-
             ComparatorOperator.LESS_THAN_OR_EQUAL -> if (operand1Value <= operand2) updateRegisterValue(
                 operation,
                 registers,
                 register,
                 amount
             )
-
             ComparatorOperator.GREATER_THAN -> if (operand1Value > operand2) updateRegisterValue(
                 operation,
                 registers,
                 register,
                 amount
             )
-
             ComparatorOperator.GREATER_THAN_OR_EQUAL -> if (operand1Value >= operand2) updateRegisterValue(
                 operation,
                 registers,
@@ -66,13 +60,7 @@ enum class ComparatorOperator {
     EQUAL, NOT_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL
 }
 
-private fun startRegisters(instructions: List<Instruction>): MutableMap<String, Int> {
-    return buildMap {
-        for ((register) in instructions) {
-            putIfAbsent(register, 0)
-        }
-    }.toMutableMap()
-}
+private val startRegisters = { instructions: List<Instruction> -> buildMap { for ((register) in instructions) putIfAbsent(register, 0) }.toMutableMap() }
 
 data class Instruction(
     val register: String,
@@ -83,9 +71,9 @@ data class Instruction(
     val operand2: Int
 )
 
-private fun parseInput(input: List<String>): List<Instruction> {
+private val parseInput = { input: List<String> ->
     val instructionRegex = Regex("""(\w+) (inc|dec) (-?\d+) if (\w+) (==|>|>=|<|<=|!=) (-?\w+)""")
-    return buildList {
+    buildList {
         for (instruction in input) {
             val regexResult = instructionRegex.matchEntire(instruction)!!.groupValues.drop(1)
             add(
