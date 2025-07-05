@@ -1,23 +1,31 @@
 private fun part1(input: String, isPart1: Boolean = true): Int {
-    val groupStack = mutableListOf<Char>()
-    var isInComment = false
-    var skipNext = false
-    var score = 0
-    var charCount = 0
+    data class ProcessingState(
+        val score: Int = 0,
+        val charCount: Int = 0,
+        val skipNext: Boolean = false,
+        val isInComment: Boolean = false,
+        val groupStack: MutableList<Char> = mutableListOf()
+    )
 
-    for (char in input) {
+    val (score, charCount) = input.fold(ProcessingState()) { state, char ->
         when {
-            skipNext -> skipNext = false
-            char == '!' -> skipNext = true
-            char == '<' && !isInComment -> isInComment = true
-            char == '<' -> charCount++
-            char == '>' && isInComment -> isInComment = false
-            isInComment -> charCount++
-            char == '{' -> groupStack.add(char)
-            char == '}' -> {
-                groupStack.removeLast()
-                score += groupStack.size + 1
+            state.skipNext -> state.copy(skipNext = false)
+            char == '!' -> state.copy(skipNext = true)
+            char == '<' && !state.isInComment -> state.copy(isInComment = true)
+            char == '<' -> state.copy(charCount = state.charCount + 1)
+            char == '>' && state.isInComment -> state.copy(isInComment = false)
+            state.isInComment -> state.copy(charCount = state.charCount + 1)
+            char == '{' -> {
+                state.groupStack.add(char)
+                state
             }
+
+            char == '}' -> {
+                state.groupStack.removeLast()
+                state.copy(score = state.score + state.groupStack.size + 1)
+            }
+
+            else -> state
         }
     }
     return if (isPart1) score else charCount
