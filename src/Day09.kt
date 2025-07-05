@@ -2,44 +2,25 @@ private fun part1(input: String, isPart1: Boolean = true): Int {
     val groupStack = mutableListOf<Char>()
     var isInComment = false
     var skipNext = false
-    var totalScore = 0
-    var groupScore = 0
+    var score = 0
     var charCount = 0
+
     for (char in input) {
-        if (skipNext) {
-            skipNext = false
-            continue
-        }
-        if (char == '!') {
-            skipNext = true
-            continue
-        }
-        if (char == '<' && !isInComment) {
-            isInComment = true
-            continue
-        }
-        if (char == '<') {
-            charCount++
-            continue
-        }
-        if (char == '>' && isInComment) {
-            isInComment = false
-            continue
-        }
-
-        if (isInComment) {
-            charCount++
-            continue
-        }
-
-        if (char == '{') groupStack.add(char)
-        if (char == '}') {
-            groupStack.removeLast()
-            groupScore += groupStack.size + 1
+        when {
+            skipNext -> skipNext = false
+            char == '!' -> skipNext = true
+            char == '<' && !isInComment -> isInComment = true
+            char == '<' -> charCount++
+            char == '>' && isInComment -> isInComment = false
+            isInComment -> charCount++
+            char == '{' -> groupStack.add(char)
+            char == '}' -> {
+                groupStack.removeLast()
+                score += groupStack.size + 1
+            }
         }
     }
-    totalScore += groupScore
-    return if (isPart1) totalScore else charCount
+    return if (isPart1) score else charCount
 }
 
 fun main() {
