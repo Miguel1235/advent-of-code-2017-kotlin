@@ -1,48 +1,22 @@
 private fun part1(input: List<Int>): Int {
      var circularList = listOf(0,1,2,3,4)
-
     var skipSize = 0
     var currentPosition = circularList.first()
-
-
     for(length in input) {
         println("going to reverse $length elements in the list $circularList starting at: $currentPosition")
-
         println(circularList.subList(currentPosition, length).reversed())
-
-
         val newCircularList = buildList {
             addAll(circularList.subList(currentPosition, length).reversed()) // wrap around it
-            addAll(circularList.takeLast((length % circularList.size)-1))
+            addAll(circularList.takeLast((length % circularList.size)-1)) // this should be changed specif to the wraps
         }
-
         circularList = newCircularList
         println(newCircularList)
-
-
 //        Move the current position forward by that length plus the skip size.
 //        Increase the skip size by one.
-
         currentPosition = length + skipSize
         skipSize++
-
         println("skips size: $skipSize - currentPosition: $currentPosition")
-
     }
-
-//    for(firstLen in circularList) {
-//        println("skipSize: $skipSize - currentPosition: $currentPosition - firstLen: $firstLen")
-//
-//        var offset = currentPosition + firstLen
-//        val result = circularList.subList(currentPosition, offset).reversed()
-//
-//
-//        val newList = result + circularList.takeLast((offset % circularList.size)-1)
-//
-//        currentPosition = offset + skipSize
-//        skipSize++
-//    }
-
     return 0
 }
 
