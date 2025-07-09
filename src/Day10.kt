@@ -14,17 +14,24 @@ private fun part1(input: List<Int>): Int {
 
                 currentPosition + length > circularList.size -> {
                     println("[WRAP] we are going to wrap  more than the list size")
-                    val end = circularList.subList(currentPosition, circularList.size).reversed()
-                    val start = circularList.subList(0, length - end.size).reversed()
+                    val end = circularList.subList(currentPosition, circularList.size)
+                    val start = circularList.subList(0, length - end.size)
                     val middle = circularList.subList(start.size, currentPosition)
 
 
                     println("start: $start - middle: $middle - end: $end")
 
 
-                    addAll(end)
+                    val reversed = (end+start).reversed()
+                    println("reversed: ${(end+start).reversed()}")
+
+                    val newStart = reversed.subList(0, length - end.size)
+                    val newEnd = reversed - newStart
+                    println("newStart: $newStart - newEnd: $newEnd")
+
+                    addAll(newEnd)
                     addAll(middle)
-                    addAll(start)
+                    addAll(newStart)
                 }
 
                 else -> {
