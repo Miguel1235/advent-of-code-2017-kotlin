@@ -1,16 +1,17 @@
 private fun part1(input: Map<Int, List<String>>): Int {
     var result = input
-//    var currentLayer = input.keys.first()
-
 //    repeat(10) {
 //        result = moveLasers(result)
 //        currentLayer = movePlayer(input, currentLayer)
 //    }
 
-    for(layer in input.keys) {
-        println("we are in the layer: $layer")
+    val min = input.keys.min()
+    val max = input.keys.max()
+
+    for (layer in min..max) {
+        val laserIndex = result[layer]?.indexOf("S")
+        println("we are in the layer: $layer - laserIndex: $laserIndex - result: $result")
         result = moveLasers(result)
-        println(result)
     }
     return 0
 }
@@ -27,7 +28,7 @@ private fun movePlayer(input: Map<Int, List<String>>, currentLayer: Int): Int {
 
 private fun parseInput(input: List<String>): Map<Int, List<String>> {
     return buildMap {
-        for(line in input) {
+        for (line in input) {
             val (layer, range) = line.split(": ").map { it.toInt() }
             put(layer, MutableList(range) { " " }.apply { this[0] = "S" })
         }
@@ -52,7 +53,7 @@ fun main() {
     val testInput = parseInput(readInput("Day13_test"))
     check(part1(testInput) == 0)
 //    check(part2(testInput) == 0)
-     
+
 //    val input = readInput("Day13")
 //    check(part1(input) == 0)
 //    check(part2(input) == 0)
