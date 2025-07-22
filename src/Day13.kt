@@ -1,61 +1,60 @@
-private fun part1(input: Map<Int, List<String>>): Int {
+private fun part1(input: List<Laser>): Int {
     var result = input
-//    repeat(10) {
-//        result = moveLasers(result)
-//        currentLayer = movePlayer(input, currentLayer)
-//    }
+    val min = input.minOf { it.layer }
+    val max = input.maxOf { it.layer }
 
-    val min = input.keys.min()
-    val max = input.keys.max()
-
-    for (layer in min..max) {
-        val laserIndex = result[layer]?.indexOf("S")
-        println("we are in the layer: $layer - laserIndex: $laserIndex - result: $result")
+    var total = 0
+    for(i in min..max) {
+        result.firstOrNull { it.layer == i }?.let {
+            if(it.current == 0) {
+                total += it.layer * (it.size+1)
+            }
+        }
         result = moveLasers(result)
     }
-    return 0
+    return total
 }
 
-private fun part2(input: List<String>): Int {
-    return 0
-}
-
-private fun movePlayer(input: Map<Int, List<String>>, currentLayer: Int): Int {
-    val keys = input.keys.toList()
-    val nextIndex = (keys.indexOf(currentLayer) + 1) % keys.size
-    return keys[nextIndex]
-}
-
-private fun parseInput(input: List<String>): Map<Int, List<String>> {
-    return buildMap {
-        for (line in input) {
-            val (layer, range) = line.split(": ").map { it.toInt() }
-            put(layer, MutableList(range) { " " }.apply { this[0] = "S" })
+enum class Direction { FORWARD, BACKWARD }
+data class Laser(val layer: Int, val current: Int, val size: Int, val direction: Direction) {
+    override fun toString(): String {
+        return buildString {
+            for (i in 0..size) {
+                append(if (i == current) "S" else ".")
+            }
         }
     }
 }
 
-private fun moveLasers(input: Map<Int, List<String>>): Map<Int, List<String>> {
-    return input.mapValues { (_, range) ->
-        val current = range.indexOf("S")
-        val next = (current + 1) % range.size
-        List(range.size) { i ->
-            when (i) {
-                next -> "S"
-                current -> " "
-                else -> range[i]
+private fun parseInput(input: List<String>): List<Laser> {
+    return buildList {
+        for (line in input) {
+            val (layer, range) = line.split(": ").map { it.toInt() }
+            add(Laser(layer, 0, range-1, Direction.FORWARD))
+        }
+    }
+}
+
+private fun moveLasers(input: List<Laser>): List<Laser> {
+    return buildList {
+        for(laser in input) {
+            val updateCurrent = if (laser.direction == Direction.FORWARD) laser.current + 1 else laser.current - 1
+            val (newDirection, newCurrent) = when {
+                updateCurrent >= laser.size -> Pair(Direction.BACKWARD, laser.size)
+                updateCurrent <= 0 -> Pair(Direction.FORWARD,0)
+                else -> Pair(laser.direction, updateCurrent)
             }
+            add(laser.copy(direction = newDirection, current = newCurrent))
         }
     }
 }
 
 fun main() {
     val testInput = parseInput(readInput("Day13_test"))
-    check(part1(testInput) == 0)
-//    check(part2(testInput) == 0)
+    check(part1(testInput) == 24)
 
-//    val input = readInput("Day13")
-//    check(part1(input) == 0)
+    val input = parseInput(readInput("Day13"))
+    check(part1(input) == 3184)
 //    check(part2(input) == 0)
 }
  
