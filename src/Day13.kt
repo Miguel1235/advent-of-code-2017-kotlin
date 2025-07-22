@@ -6,6 +6,7 @@ private fun part1(input: List<Laser>): Int {
     var total = 0
     for(i in min..max) {
         result.firstOrNull { it.layer == i }?.let {
+            // TODO: we need to add a flag to check if for real we touch something or not, this is for the second part
             if(it.current == 0) {
                 total += it.layer * (it.size+1)
             }
@@ -24,6 +25,14 @@ data class Laser(val layer: Int, val current: Int, val size: Int, val direction:
             }
         }
     }
+}
+
+private fun passTime(input: List<Laser>, time: Int): List<Laser> {
+    var result = input
+    repeat(time) {
+        result = moveLasers(result)
+    }
+    return result
 }
 
 private fun parseInput(input: List<String>): List<Laser> {
@@ -49,12 +58,24 @@ private fun moveLasers(input: List<Laser>): List<Laser> {
     }
 }
 
+private fun part2(input: List<Laser>) {
+    var time = 0
+    var realInput = input
+    while(part1(realInput) != 0) {
+        time++
+        realInput = passTime(input, time)
+    }
+    println(part1(realInput))
+    println("The time you wont get caught is $time $realInput")
+}
+
 fun main() {
     val testInput = parseInput(readInput("Day13_test"))
     check(part1(testInput) == 24)
 
+    part2(testInput)
+
     val input = parseInput(readInput("Day13"))
     check(part1(input) == 3184)
-//    check(part2(input) == 0)
 }
  
