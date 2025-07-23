@@ -4,16 +4,27 @@ private fun part1(input: List<Laser>): Int {
     val max = input.maxOf { it.layer }
 
     var total = 0
-    for(i in min..max) {
+    for (i in min..max) {
         result.firstOrNull { it.layer == i }?.let {
-            // TODO: we need to add a flag to check if for real we touch something or not, this is for the second part
-            if(it.current == 0) {
-                total += it.layer * (it.size+1)
-            }
+            if (it.current == 0) total += it.layer * (it.size + 1)
         }
         result = moveLasers(result)
     }
     return total
+}
+
+private fun checkCollision(input: List<Laser>): Boolean {
+    var result = input
+    val min = input.minOf { it.layer }
+    val max = input.maxOf { it.layer }
+
+    for (i in min..max) {
+        result.firstOrNull { it.layer == i }?.let {
+            if (it.current == 0) return true
+        }
+        result = moveLasers(result)
+    }
+    return false
 }
 
 enum class Direction { FORWARD, BACKWARD }
@@ -39,18 +50,18 @@ private fun parseInput(input: List<String>): List<Laser> {
     return buildList {
         for (line in input) {
             val (layer, range) = line.split(": ").map { it.toInt() }
-            add(Laser(layer, 0, range-1, Direction.FORWARD))
+            add(Laser(layer, 0, range - 1, Direction.FORWARD))
         }
     }
 }
 
 private fun moveLasers(input: List<Laser>): List<Laser> {
     return buildList {
-        for(laser in input) {
+        for (laser in input) {
             val updateCurrent = if (laser.direction == Direction.FORWARD) laser.current + 1 else laser.current - 1
             val (newDirection, newCurrent) = when {
                 updateCurrent >= laser.size -> Pair(Direction.BACKWARD, laser.size)
-                updateCurrent <= 0 -> Pair(Direction.FORWARD,0)
+                updateCurrent <= 0 -> Pair(Direction.FORWARD, 0)
                 else -> Pair(laser.direction, updateCurrent)
             }
             add(laser.copy(direction = newDirection, current = newCurrent))
@@ -58,24 +69,24 @@ private fun moveLasers(input: List<Laser>): List<Laser> {
     }
 }
 
-private fun part2(input: List<Laser>) {
+private fun part2(input: List<Laser>): Int {
     var time = 0
     var realInput = input
-    while(part1(realInput) != 0) {
+    while (checkCollision(realInput)) {
+        println(time)
         time++
         realInput = passTime(input, time)
     }
-    println(part1(realInput))
-    println("The time you wont get caught is $time $realInput")
+    return time
 }
 
 fun main() {
     val testInput = parseInput(readInput("Day13_test"))
     check(part1(testInput) == 24)
-
-    part2(testInput)
+    check(part2(testInput) == 10)
 
     val input = parseInput(readInput("Day13"))
     check(part1(input) == 3184)
+    part2(input).println()
 }
  
