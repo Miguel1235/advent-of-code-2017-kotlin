@@ -89,4 +89,3 @@ fun main() {
     check(part1(input) == 3184)
     part2(input).println()
 }
- 
