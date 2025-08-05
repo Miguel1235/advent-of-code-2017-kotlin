@@ -1,41 +1,23 @@
-private fun part1(startA: Long, startB: Long, pairs: Int = 40_000_000): Int {
+private fun part(startA: Long, startB: Long, isPart1: Boolean): Int {
     var a = startA
     var b = startB
 
     var judgeCount = 0
-    repeat(pairs) {
-        a = generateNext(a, true)
-        b = generateNext(b, false)
+    repeat(if(isPart1) 40_000_000 else 5_000_000) {
+        a = generateNext(a, true, isPart1)
+        b = generateNext(b, false, isPart1)
         if((a and 0xFFFF) == (b and 0xFFFF)) judgeCount++
     }
     return judgeCount
 }
 
-private fun part2(startA: Long, startB: Long, pairs: Int = 5_000_000): Int {
-    var a = startA
-    var b = startB
-    var judgeCount = 0
-    repeat(pairs) {
-        a = generateNextMultiple(a, true)
-        b = generateNextMultiple(b, false)
-        if((a and 0xFFFF) == (b and 0xFFFF)) judgeCount++
-    }
-    return judgeCount
-}
-
-private fun generateNext(start: Long, isA: Boolean): Long {
-    val factorA = 16807
-    val factorB = 48271
-    val mod = 2147483647L
-    return (start * if(isA) factorA else factorB) % mod
-}
-
-private fun generateNextMultiple(start: Long, isA: Boolean): Long {
+private fun generateNext(start: Long, isA: Boolean, isPart1: Boolean): Long {
     val factorA = 16807
     val factorB = 48271
     val mod = 2147483647L
     var result = (start * if(isA) factorA else factorB) % mod
 
+    if(isPart1) return result
     while((isA && result % 4L != 0L) || (!isA && result % 8L != 0L)) {
         result = (result * if(isA) factorA else factorB) % mod
     }
@@ -46,11 +28,11 @@ private fun parseInput(input: List<String>) = input.map { it.split("with").last(
 
 fun main() {
     val (startATest, startBTest) = parseInput(readInput("Day15_test"))
-    check(part1(startATest, startBTest) == 588)
-    check(part2(startATest, startBTest) == 309)
+    check(part(startATest, startBTest, true) == 588)
+    check(part(startATest, startBTest, false) == 309)
 
     val (startA, startB) = parseInput(readInput("Day15"))
-    check(part1(startA, startB) == 626)
-    check(part2(startA, startB) == 306)
+    check(part(startA, startB, true) == 626)
+    check(part(startA, startB, false) == 306)
 }
  
