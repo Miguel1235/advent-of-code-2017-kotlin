@@ -19,3 +19,11 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+
+fun <T> List<T>.rotateLeft(positions: Int): List<T> {
+    if (isEmpty()) return this
+    val effectivePositions = positions % size
+    return takeLast(effectivePositions) + dropLast(effectivePositions)
+
+}
