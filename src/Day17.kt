@@ -1,27 +1,39 @@
-private fun part(steps: Int, moment: Int = 2017, part2: Boolean = false): Int {
-    val start = mutableListOf(0)
-    var currentIdx = 0
-    var currentValue = 1
+private fun part1(steps: Int): Int {
+    val buffer = mutableListOf(0)
+    var idx = 0
+    val iters = 2017
 
-    repeat(moment) {
-        repeat(steps) {
-            currentIdx = (currentIdx + 1) % start.size
-        }
-        currentIdx++
-        start.add(currentIdx, currentValue)
-        currentValue++
+    for (value in 1..iters) {
+        idx = (idx + steps) % buffer.size
+        idx++
+        buffer.add(idx, value)
     }
 
-    return if(part2) start[start.indexOf(0)+1] else start[start.indexOf(2017)+1]
+    val pos = buffer.indexOf(iters)
+    return buffer[(pos + 1) % buffer.size]
+}
+
+private fun part2(steps: Int): Int {
+    var idx = 0
+    var size = 1
+    var valueAfterZero = 0
+
+    for (value in 1..50_000_000) {
+        idx = (idx + steps) % size
+        idx++
+        if (idx == 1) {
+            valueAfterZero = value
+        }
+        size++
+    }
+    return valueAfterZero
 }
 
 fun main() {
     val testInput = readInput("Day17_test").first().toInt()
-    check(part(testInput) == 638)
-//    check(part2(testInput) == 0)
-     
+    check(part1(testInput) == 638)
+
     val input = readInput("Day17").first().toInt()
-    check(part(input) == 1173)
-    part(input, 50_000_000, true)
+    check(part1(input) == 1173)
+    check(part2(input) == 1930815)
 }
- 
