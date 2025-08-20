@@ -1,40 +1,34 @@
 private fun part1(input: List<String>): Pair<String, Int> {
-    val startPoint = Pair(0, input.first().indexOfFirst { it == '|' })
-    var currentPoint = startPoint
-    var currentDirection = Directions.DOWN
+    var point = Pair(0, input.first().indexOfFirst { it == '|' })
+    var direction = Directions.DOWN
     val words = mutableListOf<Char>()
+    val wordRegex = Regex("""\w+""")
 
     var steps = 0
-    while(true) {
+    while (true) {
         steps++
-        val (row, col) = currentPoint
-        if(input[row][col] == '+') {
-                    for(dir in Directions.entries) {
-                        val newRow = row + dir.rowDelta
-                        val newCol = col + dir.colDelta
-                        val entity = input.getOrNull(newRow)?.getOrNull(newCol)
-                        if(entity == null || entity == ' ') continue
-                        if(dir == Directions.UP && currentDirection == Directions.DOWN) continue
-                        if(dir == Directions.DOWN && currentDirection == Directions.UP) continue
-                        if(dir == Directions.LEFT && currentDirection == Directions.RIGHT) continue
-                        if(dir == Directions.RIGHT && currentDirection == Directions.LEFT) continue
-                        currentDirection = dir
-                        break
-                    }
+        val (row, col) = point
+        if (input[row][col] == '+') {
+            for (dir in Directions.entries) {
+                val newRow = row + dir.rowDelta
+                val newCol = col + dir.colDelta
+                val entity = input.getOrNull(newRow)?.getOrNull(newCol)
+                if (entity == null || entity == ' ') continue
+                if (dir == Directions.UP && direction == Directions.DOWN) continue
+                if (dir == Directions.DOWN && direction == Directions.UP) continue
+                if (dir == Directions.LEFT && direction == Directions.RIGHT) continue
+                if (dir == Directions.RIGHT && direction == Directions.LEFT) continue
+                direction = dir
+                break
+            }
         }
+        val newRow = row + direction.rowDelta
+        val newCol = col + direction.colDelta
+        val entity = input.getOrNull(newRow)?.getOrNull(newCol)
+        if (entity == null || entity == ' ') break
 
-        val newRow = row + currentDirection.rowDelta
-        val newCol = col + currentDirection.colDelta
-
-        val entity = input.getOrNull(newRow)?.getOrNull(newCol) ?: break
-
-        if(entity == ' ') {
-            break
-        }
-
-        if(entity.toString().contains(Regex("""\w+"""))) words.add(entity)
-
-        currentPoint = Pair(newRow, newCol)
+        if (entity.toString().contains(wordRegex)) words.add(entity)
+        point = Pair(newRow, newCol)
     }
     return Pair(words.joinToString(""), steps)
 }
