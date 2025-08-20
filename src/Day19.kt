@@ -1,11 +1,12 @@
-private fun part1(input: List<String>): Int {
+private fun part1(input: List<String>): Pair<String, Int> {
     val startPoint = Pair(0, input.first().indexOfFirst { it == '|' })
     var currentPoint = startPoint
     var currentDirection = Directions.DOWN
     val words = mutableListOf<Char>()
 
-
+    var steps = 0
     while(true) {
+        steps++
         val (row, col) = currentPoint
         if(input[row][col] == '+') {
                     for(dir in Directions.entries) {
@@ -20,33 +21,33 @@ private fun part1(input: List<String>): Int {
                         currentDirection = dir
                         break
                     }
-
         }
+
         val newRow = row + currentDirection.rowDelta
         val newCol = col + currentDirection.colDelta
 
         val entity = input.getOrNull(newRow)?.getOrNull(newCol) ?: break
-//        println("item: $entity : newRow: $newRow : newCol: $newCol : dir: $currentDirection")
+
+        if(entity == ' ') {
+            break
+        }
 
         if(entity.toString().contains(Regex("""\w+"""))) words.add(entity)
 
         currentPoint = Pair(newRow, newCol)
-
-        println(words.joinToString(""))
     }
-    println(words.joinToString(""))
-    return 0
+    return Pair(words.joinToString(""), steps)
 }
-
-//private fun part2(input: List<String>): Int {
-//    return 0
-//}
 
 fun main() {
     val testInput = readInputNoTrim("Day19_test")
-    check(part1(testInput) == 0)
+    val testResult = part1(testInput)
+    check(testResult.first == "ABCDEF")
+    check(testResult.second == 38)
 
     val input = readInputNoTrim("Day19")
-    check(part1(input) == 0)
+    val inputResult = part1(input)
+    check(inputResult.first == "PVBSCMEQHY")
+    check(inputResult.second == 17736)
 }
  
