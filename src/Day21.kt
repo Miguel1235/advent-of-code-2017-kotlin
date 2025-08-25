@@ -1,4 +1,23 @@
-data class Rule(val from: List<List<Char>>, val to: List<List<Char>>)
+fun <T> flipHorizontal(grid: List<List<T>>): List<List<T>> = grid.map { it.asReversed() }
+fun <T> flipVertical(grid: List<List<T>>): List<List<T>> = grid.asReversed()
+fun <T> flipBoth(grid: List<List<T>>): List<List<T>> = grid.asReversed().map { it.asReversed() }
+fun <T> transpose(grid: List<List<T>>): List<List<T>> = grid[0].indices.map { c -> grid.indices.map { r -> grid[r][c] } }
+fun <T> rotate90(grid: List<List<T>>): List<List<T>> = transpose(grid.asReversed())
+fun <T> rotate180(grid: List<List<T>>): List<List<T>> = flipBoth(grid)
+fun <T> rotate270(grid: List<List<T>>): List<List<T>> = transpose(grid).asReversed()
+
+data class Rule(val from: List<List<Char>>, val to: List<List<Char>>) {
+    fun allSymmetries(): List<List<List<Char>>> =  listOf(
+        from,
+        flipHorizontal(from),
+        rotate90(from),
+        rotate180(from),
+        rotate270(from),
+        flipVertical(from),
+        flipHorizontal(rotate90(from)),
+        flipVertical(rotate90(from))
+    )
+}
 
 
 fun <T> splitGrid(grid: List<List<T>>, parts: Int): List<List<List<T>>> {
@@ -29,6 +48,9 @@ fun <T> splitGrid(grid: List<List<T>>, parts: Int): List<List<List<T>>> {
 
 
 private fun part1(rules: List<Rule>): Int {
+    val starter = rules[1].from
+//    allSymmetries(starter).forEach { prettyPrint(it) }
+
     var start = mutableListOf(".#.", "..#", "###").map { it.toList() }
 
     val rule2Apply = rules.find { it.from == start }
@@ -38,20 +60,16 @@ private fun part1(rules: List<Rule>): Int {
 
     val isDivBy2 = start[0].count() % 2 == 0
     if(isDivBy2) {
-        println(start)
-        println(splitGrid(start, 4))
-//        println(start.split)
-//        println(start.windowed(2, 2))
-//        for(r in 0..<2) {
-//            for(c in 0..<2) {
-//                println("r: $r, c: $c - ${start[r][c]}")
-////                println(start[i][j])
-//            }
-//            println()
-//        }
-//        println("going to divide the start by two")
-//        val r = start.take(2)
-//        println(r.map { it.take(2) })
+        val enhancedGrid = splitGrid(start, start.size)
+
+        val result = buildList {
+            for(square in enhancedGrid) {
+                rules.find { rule -> rule.allSymmetries().any { it == square } }?.let {
+                    add(it.to)
+                }
+            }
+        }
+        println(result)
     }
 
     return 0
@@ -62,8 +80,8 @@ private fun parseInput(rules: List<String>) = rules.map {
     Rule(from.map {it.toList()}, to.map {it.toList()})
 }
 
-private fun prettyPrint(rule: List<String>) {
-    rule.forEach {println(it)}
+private fun <T>prettyPrint(rule: List<T>) {
+    rule.forEach { println(it) }
     println()
 }
 
