@@ -1,13 +1,15 @@
 fun <T> flipHorizontal(grid: List<List<T>>): List<List<T>> = grid.map { it.asReversed() }
 fun <T> flipVertical(grid: List<List<T>>): List<List<T>> = grid.asReversed()
 fun <T> flipBoth(grid: List<List<T>>): List<List<T>> = grid.asReversed().map { it.asReversed() }
-fun <T> transpose(grid: List<List<T>>): List<List<T>> = grid[0].indices.map { c -> grid.indices.map { r -> grid[r][c] } }
+fun <T> transpose(grid: List<List<T>>): List<List<T>> =
+    grid[0].indices.map { c -> grid.indices.map { r -> grid[r][c] } }
+
 fun <T> rotate90(grid: List<List<T>>): List<List<T>> = transpose(grid.asReversed())
 fun <T> rotate180(grid: List<List<T>>): List<List<T>> = flipBoth(grid)
 fun <T> rotate270(grid: List<List<T>>): List<List<T>> = transpose(grid).asReversed()
 
 data class Rule(val from: List<List<Char>>, val to: List<List<Char>>) {
-    fun allSymmetries(): List<List<List<Char>>> =  listOf(
+    fun allSymmetries(): List<List<List<Char>>> = listOf(
         from,
         flipHorizontal(from),
         rotate90(from),
@@ -48,9 +50,6 @@ fun <T> splitGrid(grid: List<List<T>>, parts: Int): List<List<List<T>>> {
 
 
 private fun part1(rules: List<Rule>): Int {
-    val starter = rules[1].from
-//    allSymmetries(starter).forEach { prettyPrint(it) }
-
     var start = mutableListOf(".#.", "..#", "###").map { it.toList() }
 
     val rule2Apply = rules.find { it.from == start }
@@ -59,17 +58,55 @@ private fun part1(rules: List<Rule>): Int {
 
 
     val isDivBy2 = start[0].count() % 2 == 0
-    if(isDivBy2) {
+    if (isDivBy2) {
         val enhancedGrid = splitGrid(start, start.size)
-
         val result = buildList {
-            for(square in enhancedGrid) {
+            for (square in enhancedGrid) {
                 rules.find { rule -> rule.allSymmetries().any { it == square } }?.let {
                     add(it.to)
                 }
             }
         }
-        println(result)
+
+
+        val r = buildList {
+            for (i in 0..<result.size step 2) {
+                for(a in i..<i+2) {
+                    for(b in 0..<result[0].size) {
+                        add(result[a][b]+result[a][b])
+                    }
+                }
+            }
+        }
+
+        prettyPrint(r)
+
+
+
+
+//        val a = buildList {
+//            for(a in 0..<result[0].size) {
+//                add(result[0][a]+result[1][a])
+//            }
+//        }
+//        prettyPrint(a)
+//
+//        val b = buildList {
+//            for(a in 0..<result[0].size) {
+//                add(result[2][a]+result[3][a])
+//            }
+//        }
+//        prettyPrint(b)
+//
+//
+//        prettyPrint(a+b)
+
+//        val grouped = result.flatten().chunked(3)
+//        for(r in grouped) {
+//            println(r)
+//        }
+
+//        prettyPrint(result.flatten().flatten().chunked((start.size/2)*3))
     }
 
     return 0
@@ -77,10 +114,10 @@ private fun part1(rules: List<Rule>): Int {
 
 private fun parseInput(rules: List<String>) = rules.map {
     val (from, to) = it.split(" => ").map { it.split("/") }
-    Rule(from.map {it.toList()}, to.map {it.toList()})
+    Rule(from.map { it.toList() }, to.map { it.toList() })
 }
 
-private fun <T>prettyPrint(rule: List<T>) {
+private fun <T> prettyPrint(rule: List<T>) {
     rule.forEach { println(it) }
     println()
 }
@@ -89,7 +126,7 @@ fun main() {
     val testInput = parseInput(readInput("Day21_test"))
     check(part1(testInput) == 0)
 //    check(part2(testInput) == 0)
-     
+
 //    val input = readInput("Day21")
 //    check(part1(input) == 0)
 //    check(part2(input) == 0)
