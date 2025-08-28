@@ -117,10 +117,7 @@ private fun parseInput(rules: List<String>) = rules.map {
     Rule(from.map { it.toList() }, to.map { it.toList() })
 }
 
-private fun <T> prettyPrint(rule: List<T>) {
-    rule.forEach { println(it) }
-    println()
-}
+
 
 fun main() {
     val testInput = parseInput(readInput("Day21_test"))

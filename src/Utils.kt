@@ -36,3 +36,8 @@ fun <T> List<T>.rotateLeft(positions: Int): List<T> {
     return takeLast(effectivePositions) + dropLast(effectivePositions)
 
 }
+
+fun <T> prettyPrint(rule: List<T>) {
+    rule.forEach { println(it) }
+    println()
+}
