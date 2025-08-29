@@ -49,9 +49,9 @@ private fun part(inputMap: Map<Pair<Int, Int>, Char>, isPart1: Boolean = true): 
 
 private fun parseInput(input: List<String>): Map<Pair<Int, Int>, Char> {
     return buildMap {
-        for (r in 0..<input.size) {
-            for (c in 0..<input.size) {
-                put(Pair(r, c), input[r][c])
+        input.forEachIndexed { r, line ->
+            line.forEachIndexed { c, ch ->
+                put(r to c, ch)
             }
         }
     }
